@@ -1,0 +1,4 @@
+venv/
+nltk/
+out/
+src/tokenizers/__pycache__
