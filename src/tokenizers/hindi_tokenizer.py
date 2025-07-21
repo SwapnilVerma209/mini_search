@@ -17,10 +17,13 @@ class HindiTokenizer(Tokenizer):
         pass
 
     def get_raw_token_list(self, text: str) -> list:
-        raw_token_list = indic_tokenize.trivial_tokenize(text)
-        for i in range(len(raw_token_list)):
-            token = raw_token_list[i]
-            raw_token_list[i] = token.strip()
+        token_list = indic_tokenize.trivial_tokenize(text)
+        raw_token_list = []
+        for i in range(len(token_list)):
+            token = token_list[i].strip()
+            if len(token) == 0:
+                continue
+            raw_token_list.append(token)
         return raw_token_list
 
     def get_stemmed_token_list(self, text: str) -> list:
@@ -31,8 +34,6 @@ class HindiTokenizer(Tokenizer):
         stemmed_token_list = self.get_stemmed_token_list(text)
         filtered_token_list = []
         for token in stemmed_token_list:
-            if len(token) == 0:
-                continue
             if self._is_punctuation(token) or token in self.stops:
                 continue
             filtered_token_list.append(token)

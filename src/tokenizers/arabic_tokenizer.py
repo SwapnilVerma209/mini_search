@@ -2,8 +2,8 @@ import os
 import sys
 
 import nltk
-from nltk import word_tokenize
 from nltk.stem.snowball import ArabicStemmer
+from nltk.tokenize.regexp import wordpunct_tokenize
 from nltk.corpus import stopwords
 
 from tokenizer import Tokenizer
@@ -11,7 +11,6 @@ from tokenizer import Tokenizer
 nltk_path = os.path.abspath('../../nltk')
 if nltk_path not in nltk.data.path:
     nltk.data.path.append(nltk_path)
-nltk.download('punkt_tab', download_dir=nltk_path)
 nltk.download('stopwords', download_dir=nltk_path)
 
 class ArabicTokenizer(Tokenizer):
@@ -22,7 +21,7 @@ class ArabicTokenizer(Tokenizer):
         pass
 
     def get_raw_token_list(self, text: str) -> list:
-        return word_tokenize(text, 'arabic')
+        return wordpunct_tokenize(text)
     
     def get_stemmed_token_list(self, text: str) -> list:
         stemmed_token_list = self.get_raw_token_list(text)
@@ -41,12 +40,16 @@ class ArabicTokenizer(Tokenizer):
         return filtered_token_list
 
 if __name__ == '__main__':
-    eng_tok = EnglishTokenizer()
-    sentence = "The FitnessGram Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly but gets faster each minute after you hear this signal bodeboop. A sing lap should be completed every time you hear this sound. ding Remember to run in a straight line and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark. Get ready!… Start. ding"
+    arb_tok = ArabicTokenizer()
+    sentence = """
+    الروتين اليومي
+
+يبدأ يومي بالاستيقاظ مبكرًا لأداء صلاة الفجر. بعد ذلك، أتناول الإفطار وأشرب القهوة قبل الذهاب إلى العمل. أعمل لمدة ثماني ساعات وأتناول الغداء في المكتب. بعد العمل، أذهب إلى النادي لممارسة الرياضة. أعود إلى المنزل لتناول العشاء مع العائلة وأقضي بعض الوقت في القراءة قبل النوم.
+    """
     print("---Raw tokens---")
-    print(eng_tok.get_raw_token_list(sentence))
+    print(arb_tok.get_raw_token_list(sentence))
     print("---Stemmed tokens---")
-    print(eng_tok.get_stemmed_token_list(sentence))
+    print(arb_tok.get_stemmed_token_list(sentence))
     print("---Filtered tokens---")
-    print(eng_tok.get_filtered_token_list(sentence))
+    print(arb_tok.get_filtered_token_list(sentence))
 
