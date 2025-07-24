@@ -1,6 +1,3 @@
-import os
-import sys
-
 from chinese import ChineseAnalyzer
 import nltk
 from nltk.corpus import stopwords

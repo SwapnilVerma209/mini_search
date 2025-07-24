@@ -1,6 +1,3 @@
-import os
-import sys
-
 import nltk
 from nltk.stem.snowball import ArabicStemmer
 from nltk.tokenize.regexp import wordpunct_tokenize
@@ -26,10 +23,15 @@ class ArabicTokenizer(Tokenizer):
         return raw_token_list
     
     def get_stemmed_token_list(self, text: str) -> list:
-        stemmed_token_list = self.get_raw_token_list(text)
-        for i in range(len(stemmed_token_list)):
-            token = stemmed_token_list[i]
-            stemmed_token_list[i] = self.stemmer.stem(token)
+        raw_token_list = self.get_raw_token_list(text)
+        stemmed_token_list = []
+        for i in range(len(raw_token_list)):
+            token = raw_token_list[i]
+            token = self.stemmer.stem(token)
+            token = token.strip()
+            if len(token) == 0:
+                continue
+            stemmed_token_list.append(token)
         return stemmed_token_list
     
     def get_filtered_token_list(self, text: str) -> list:

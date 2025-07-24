@@ -1,23 +1,6 @@
-import requests
-import sys
-import unicodedata
-from urllib.parse import urljoin
-
-import nltk
-from bs4 import BeautifulSoup
-from nltk.stem import PorterStemmer
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from zh_sentence.tokenizer import tokenize as zh_tokenize
-
-nltk.data.path.append('../nltk')
-nltk.download('punkt_tab', download_dir='../nltk')
-nltk.download('stopwords', download_dir='../nltk')
+from tokenizers import *
 
 class Parser:
-    stops = set(stopwords.words('english'))
-    stemmer = PorterStemmer()
-
     def __init__(self, url: str):
         self.reset(url)
 

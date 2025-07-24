@@ -1,6 +1,3 @@
-import os
-import sys
-
 import nltk
 from nltk import word_tokenize
 from nltk.stem.snowball import SpanishStemmer

@@ -1,6 +1,3 @@
-import os
-import sys
-
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.snowball import EnglishStemmer

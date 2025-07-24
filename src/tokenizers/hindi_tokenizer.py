@@ -1,7 +1,3 @@
-import os
-import subprocess
-import sys
-
 import snowballstemmer
 from stopwords_hindi import hindi_sw
 from indicnlp.tokenize import indic_tokenize
