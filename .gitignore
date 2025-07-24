@@ -1,4 +1,6 @@
+.DS_Store
 venv/
-nltk/
 out/
+src/tokenizers/nltk
 src/tokenizers/__pycache__
+src/test/tokenizers/__pycache__
