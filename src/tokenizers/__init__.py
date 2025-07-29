@@ -1,3 +1,18 @@
+"""Tokenizers
+
+Imports the Python os library, nltk, and downloads the nltk tokenizer and
+stopword data as dependencies.
+
+Also imports the tokenizer modules:
+    tokenizer
+    english_tokenizer
+    chinese_tokenizer
+    hindi_tokenizer
+    spanish_tokenizer
+    arabic_tokenizer
+    generic_tokenizer
+"""
+
 import os
 import nltk
 
