@@ -1,9 +1,23 @@
+"""A test program for the SpanishTokenizer.
+
+This tests the SpanishTokenizer against some sample Spanish text. Prints the
+original text, followed by three lists of tokens; the raw, stemmed, and
+filtered tokens, respectively.
+
+Imports the local context module, and the SpanishTokenizer from the local
+tokenizer module.
+
+Useage
+------
+python3 spanish_test.py
+"""
+
 from context import tokenizers
 from tokenizers.spanish_tokenizer import SpanishTokenizer
 
 if __name__ == '__main__':
     esp_tok = SpanishTokenizer()
-    sentence = """
+    text = """
     Yo vivo en Granada, una ciudad pequeña que tiene monumentos muy importantes
     como la Alhambra. Aquí la comida es deliciosa y son famosos el gazpacho, el
     rebujito y el salmorejo.
@@ -18,9 +32,11 @@ if __name__ == '__main__':
     fútbol en mi televisión. Además, cerca de mi casa hay muchas tiendas para
     hacer la compra, como panadería, carnicería y pescadería.
     """
+    print("---Original text---")
+    print(text)
     print("---Raw tokens---")
-    print(esp_tok.get_raw_token_list(sentence))
+    print(esp_tok.get_raw_token_list(text))
     print("---Stemmed tokens---")
-    print(esp_tok.get_stemmed_token_list(sentence))
+    print(esp_tok.get_stemmed_token_list(text))
     print("---Filtered tokens---")
-    print(esp_tok.get_filtered_token_list(sentence))
+    print(esp_tok.get_filtered_token_list(text))

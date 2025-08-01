@@ -1,3 +1,23 @@
+"""A test program for the parser.
+
+Given the language tag passed as an argument, it selects a webpage from
+site_dict for the parser to work on. If the language tag is not in site_dict's
+keys, then the default url is chosen. Then, the occurence dictionaries of the
+title, header, and paragraph tokens of the page, and the list of absolute urls
+on the page are printed to stdout.
+
+The URLs in site_dict are URLs to the wikipedia pages about the supported
+languages, in their respective languages. The default URL is a article about a
+particular unsopported language, in that language (in this case, French).
+
+Imports the python sys module, the local context module, and the local Parser
+module.
+
+Useage
+------
+python3 parser_test.py <language code>
+"""
+
 import sys
 from context import parser
 from parser import Parser
@@ -13,7 +33,7 @@ default_url = 'https://fr.wikipedia.org/wiki/Fran%C3%A7ais'
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        sys.stderr.write("Usage: %s <language code>\n")
+        sys.stderr.write("Usage: python3 %s <language code>\n")
         sys.exit(1)
     lang_code = sys.argv[1]
     url = default_url

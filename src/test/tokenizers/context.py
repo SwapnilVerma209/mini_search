@@ -1,3 +1,8 @@
+"""A context file for the tokenizer tests.
+
+Imports the python os and sys modules, and the local tokenizers package.
+"""
+
 import os
 import sys
 dirname = os.path.dirname(__file__)

@@ -1,3 +1,8 @@
+"""A context file for the parser test.
+
+Imports the python os and sys modules, and the local parser package.
+"""
+
 import os
 import sys
 dirname = os.path.dirname(__file__)
