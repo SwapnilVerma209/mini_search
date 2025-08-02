@@ -1,5 +1,6 @@
 import snowballstemmer
 from stopwords_hindi import hindi_sw
+from indicnlp.normalize.indic_normalize import IndicNormalizerFactory
 from indicnlp.tokenize import indic_tokenize
 
 from .tokenizer import Tokenizer
@@ -10,7 +11,7 @@ class HindiTokenizer(Tokenizer):
     Provides an interface for getting Hindi tokens at different stages of
     processing either as a list or as a dictonary with tokens and their
     occurence indicies. Utilizes the stopword data from the stopwords_hindi
-    package, and the tokenizer from indicnlp.
+    package, and the tokenizer and the normalizer from indicnlp.
 
     Attributes
     ----------
@@ -18,6 +19,8 @@ class HindiTokenizer(Tokenizer):
         A set of Hindi stopwords.
     stemmer : snowballstemmer
         A Snowball stemmer for Hindi.
+    normalizer : DevanagariNormalizer
+        A normalizer for the Devanagari script.
     
     Methods
     -------
@@ -40,6 +43,7 @@ class HindiTokenizer(Tokenizer):
 
     stops = hindi_sw.get_hindi_sw()
     stemmer = snowballstemmer.stemmer('hindi')
+    normalizer = IndicNormalizerFactory().get_normalizer('hi')
 
     def __init__(self):
         pass
@@ -61,6 +65,7 @@ class HindiTokenizer(Tokenizer):
             A list of raw tokens generated from the string.
         """
 
+        text = self.normalizer.normalize(text)
         token_list = indic_tokenize.trivial_tokenize(text)
         raw_token_list = []
         for i in range(len(token_list)):
@@ -73,8 +78,8 @@ class HindiTokenizer(Tokenizer):
     def get_stemmed_token_list(self, text: str) -> list:
         """Creates and returns a list of stemmed tokens.
 
-        Words in the given string are separated as tokens, stemmed, and put
-        into a list. No filtering is done.
+        Words in the given string are normalized, separated as tokens, stemmed,
+        and put into a list. No filtering is done.
 
         Parameters
         ----------
@@ -93,8 +98,8 @@ class HindiTokenizer(Tokenizer):
     def get_filtered_token_list(self, text: str) -> list:
         """Creates and returns a list of stemmed and filtered tokens.
 
-        Words in the given string are separated as tokens, stemmed, filtered of
-        stopwords and standalone punctuation, and put into a list.
+        Words in the given string are normalized, separated as tokens, stemmed,
+        filtered of stopwords and standalone punctuation, and put into a list.
 
         Parameters
         ----------
