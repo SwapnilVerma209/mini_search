@@ -36,7 +36,7 @@ If you find something wrong with any of the tokenizers, please let me know
 - 官话/官話 (Mandarin Chinese)
 - हिन्दी (Hindi)
 - Español/Castellano (Spanish/Castilian)
-- العربية الفصحى الحديثة (Standard Arabic)
+- العربية الفصحى الحديث (Standard Arabic)
 
 ### Note on Non-supported Languages
 There is a generic tokenizer used for languages other than the supported ones.
@@ -54,6 +54,7 @@ this, it should only be used as a last resort.
     - For Windows systems:
         - cmd.exe: `C:\> <dirname>\Scripts\activate.bat`
         - PowerShell: `PS C:\> <dirname>\Scripts\Activate.ps1`
+    
     Where dirname is the name of your virtual environment's directory (you
     created this in step 3).
 5. Install dependencies with `pip install -r requirements.txt`.
@@ -106,10 +107,11 @@ p.set_url(new_url)
 ```
 
 ### Tokenizers
-Included in the project is a package, tokenizers/. It contains modules for
-several tokenizers. There is an abstract base tokenizer class (in
-tokenizer.py). This is not meant to be instantiated. There is one tokenizer
-class for every supported language, each in its own module. Finally, there is a
+Included in the project is a package, [tokenizers](src/tokenizers/). It
+contains modules for several tokenizers. There is an abstract base
+[tokenizer](src/tokenizers/tokenizer.py) class. This is not meant to be
+instantiated. There is one tokenizer class for every supported language, each
+in its own module. Finally, there is a
 [generic tokenizer](src/tokenizers/generic_tokenizer.py) meant for
 non-supported languages. This removes whitespaces and splits text into
 character bigrams. Only use this one as a last resort, since it is space
