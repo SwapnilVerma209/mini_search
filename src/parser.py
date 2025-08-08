@@ -1,6 +1,8 @@
 import requests
 from urllib.parse import urljoin
+import bcp47
 from bs4 import BeautifulSoup
+from bs4.element import Tag
 
 from tokenizers import *
 
@@ -34,9 +36,6 @@ class Parser:
         Tokenizer for unsupported languages.
     url : str
         URL of the current page.
-    primary_tok : Tokenizer
-        The primary tokenizer for the current page (based on the global 'lang'
-        value).
     soup : BeautifulSoup
         A representation of the current webpage as a nested data structure.
     
@@ -55,37 +54,93 @@ class Parser:
     """
 
     tokenizer_dict = {
-        'en': english_tokenizer.EnglishTokenizer(),
-        'zh': chinese_tokenizer.ChineseTokenizer(),
-        'hi': hindi_tokenizer.HindiTokenizer(),
-        'es': spanish_tokenizer.SpanishTokenizer(),
-        'ar': arabic_tokenizer.ArabicTokenizer(),
+        'English': english_tokenizer.EnglishTokenizer(),
+        'Chinese': chinese_tokenizer.ChineseTokenizer(),
+        'Hindi': hindi_tokenizer.HindiTokenizer(),
+        'Hindi (Latin)': hindi_latin_tokenizer.HindiLatinTokenizer(),
+        'Spanish': spanish_tokenizer.SpanishTokenizer(),
+        'Arabic': arabic_tokenizer.ArabicTokenizer(),
     }
     gen_tokenizer = generic_tokenizer.GenericTokenizer()
 
+    language_dict = cls._create_lang_dict()
+
+    @classmethod
+    def _create_lang_dict(cls) -> dict:
+        """Creates and returns a dictionary mapping HTML language subtags to
+        supported languages.
+
+        The keys are the language subtags representing sublanguages of the
+        supported languages. The value is the simple language name,
+        corresponding to the keys of the tokenizer dictionary.
+
+        Returns
+        -------
+        lang_dict : dict
+            The mappings of HTML language subtags to simple language names.
+        """
+        lang_dict = {}
+        for sublanguage, tag in bcp47.languages.items():
+            for language in tokenizer_dict:
+                if language in sublanguage:
+                    if language == 'Hindi':
+                        if 'Latin' not in sublanguage:
+                            lang_dict[tag] = language
+                    else:
+                        lang_dict[tag] = language
+        return lang_dict
+            
     def __init__(self):
         pass
-      
-    def _get_tokenizer(self, lang: str) -> tokenizer.Tokenizer:
-        """Returns a tokenizer for the given language tag.
+    
+    def _get_language(self, tag: Tag) -> str:
+        """Gets the language of the HTML element as indicated by the HTML.
 
-        The language tag is used to find the language's tokenizer in
-        tokenizer_dict. If the entry does not exist, the generic tokenizer is
-        returned.
+        First, the element represented by the BeautifulSoup tag is checked for
+        a lang attribute of its own. If it does not, then this method searches
+        for the closest ancestor with a lang attribute. If none is found, then
+        None is returned.
+
+        In either case, if the lang attribute matches a supported language,
+        then the simple name of the language is returned (corresponding to the
+        keys of the tokenizer dictionary). Otherwise, None is returned.
+
+        Returns
+        -------
+        : str
+            The simple name of the language of the element represented by tag,
+            None otherwise.
+        """
+        for node in tag.self_and_parents:
+            if 'lang' in node.attrs:
+                lang = node['lang']
+                if lang in self.language_dict:
+                    return self.language_dict[lang]
+                return None
+        return None
+
+
+    def _get_tokenizer(self, tag: Tag) -> tokenizer.Tokenizer:
+        """Returns a tokenizer the HTML element represented by tag.
+
+        The language of the HTML element is found, then it is used to find the 
+        language's tokenizer in tokenizer_dict. If the entry does not exist,
+        the generic tokenizer is returned.
 
         Parameters
         ----------
-        lang : str
-            The HTML language tag.
+        tag : Tag
+            The BeautifulSoup Tag representing the the HTML element.
 
         Returns
         -------
         tokenizer : Tokenizer
-            A tokenizer for the given language.
+            A tokenizer for HTML element's language.
         """
-        if lang in self.tokenizer_dict:
-            return self.tokenizer_dict[lang]
-        return self.gen_tokenizer
+        language = self._get_language(tag)
+        if language == None:
+            return self.gen_tokenizer
+        return self.tokenizer_dict[language]
 
     def set_url(self, url: str) -> None:
         """Sets the current page to that of the given URL.
@@ -100,10 +155,6 @@ class Parser:
         """
         self.url = url
         self._make_soup()
-        self.primary_tok = self.gen_tokenizer
-        if 'lang' in self.soup.html.attrs:
-            primary_lang = self.soup.html['lang']
-            self.primary_tok = self._get_tokenizer(primary_lang)
 
     def _get_html(self) -> str:
         """Downloads and returns the HTML text from the URL.
@@ -142,10 +193,7 @@ class Parser:
             occurences.
         """
         title_tag = self.soup.head.title
-        tok = self.primary_tok
-        if 'lang' in title_tag.attrs:
-            lang = title_tag['lang']
-            tok = self._get_tokenizer(lang)
+        tok = self._get_tokenizer(title_tag)
         title_text = title_tag.string
         return tok.get_filtered_token_dict(title_text)
 
@@ -176,10 +224,7 @@ class Parser:
         header_type = 'h%d' % n
         header_tokens = []
         for header_tag in self.soup.find_all(header_type):
-            tok = self.primary_tok
-            if 'lang' in header_tag.attrs:
-                lang = header_tag['lang']
-                tok = self._get_tokenizer(lang)
+            tok = self._get_tokenizer(header_tag)
             header_text = header_tag.text
             tokens = tok.get_filtered_token_dict(header_text)
             header_tokens.append(tokens)
@@ -225,10 +270,7 @@ class Parser:
         """
         paragraph_tokens = []
         for paragraph_tag in self.soup.find_all('p'):
-            tok = self.primary_tok
-            if 'lang' in paragraph_tag.attrs:
-                lang = paragraph_tag['lang']
-                tok = self._get_tokenizer(lang)
+            tok = self._get_tokenizer(paragraph_tag)
             paragraph_text = paragraph_tag.text
             tokens = tok.get_filtered_token_dict(paragraph_text)
             paragraph_tokens.append(tokens)

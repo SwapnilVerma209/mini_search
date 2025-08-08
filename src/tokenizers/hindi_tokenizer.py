@@ -6,7 +6,7 @@ from indicnlp.tokenize import indic_tokenize
 from .tokenizer import Tokenizer
 
 class HindiTokenizer(Tokenizer):
-    """A tokenizer for Hindi.
+    """A tokenizer for Hindi in the Devanagari script.
     
     Provides an interface for getting Hindi tokens at different stages of
     processing either as a list or as a dictonary with tokens and their
