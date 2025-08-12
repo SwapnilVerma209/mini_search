@@ -1,8 +1,18 @@
+# MacOS specific
 .DS_Store
+
+# Virtual environment
 venv/
+
+# Output directory
 out/
-src/__pycache__
+
+# Tokenizer data
 src/tokenizers/nltk
+src/tokenizers/indic_nlp_resources
+
+# Pycaches
+src/__pycache__
 src/tokenizers/__pycache__
 src/test/parser/__pycache__
 src/test/tokenizers/__pycache__

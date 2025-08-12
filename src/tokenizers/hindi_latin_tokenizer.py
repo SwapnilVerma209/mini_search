@@ -1,6 +1,6 @@
 from indicnlp.transliterate.unicode_transliterate import ItransTransliterator
 
-from hindi_tokenizer import HindiTokenizer
+from .hindi_tokenizer import HindiTokenizer
 
 class HindiLatinTokenizer(HindiTokenizer):
     """A tokenizer for Hindi in the Latin script.
@@ -10,6 +10,9 @@ class HindiLatinTokenizer(HindiTokenizer):
     occurence indicies. Utilizes the stopword data from the stopwords_hindi
     package, and the transliterator, tokenizer, and the normalizer from
     indicnlp.
+
+    Tokens are converted into the Devanagari script to maintain compatability
+    with the standard Hindi tokenizer.
 
     Attributes
     ----------

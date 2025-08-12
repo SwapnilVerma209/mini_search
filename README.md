@@ -12,6 +12,7 @@ more established search engine like Google.
 - [LiHiSTO](https://github.com/semicolon123/LiHiSTO) (see [citations](docs/citations.bib))
 - [Indic NLP Library](https://github.com/anoopkunchukuttan/indic_nlp_library)
 (see [citations](docs/citations.bib))
+- [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources)
 - [Requests](https://requests.readthedocs.io/)
 - [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/)
 
@@ -34,9 +35,10 @@ If you find something wrong with any of the tokenizers, please let me know
 ## Supported Languages
 - English
 - 官话/官話 (Mandarin Chinese)
-- हिन्दी (Hindi)
+- हिन्दी (देवनागरी) (Hindi (Devanagari))
+- Hindi (Latin)
 - Español/Castellano (Spanish/Castilian)
-- العربية الفصحى الحديث (Standard Arabic)
+- العربية (الفصحى واللهجات) (Arabic (standard and dialects))
 
 ### Note on Non-supported Languages
 There is a generic tokenizer used for languages other than the supported ones.
@@ -50,14 +52,22 @@ this, it should only be used as a last resort.
 2. Change directory to the root of the cloned repository.
 3. Create a python3 virtual environment with: `python3 -m venv <dirname>`.
 4. Activate the virtual enviroment with:
-    - For POSIX systems (bash/zsh): `source <dirname>/bin/activate`
-    - For Windows systems:
-        - cmd.exe: `C:\> <dirname>\Scripts\activate.bat`
-        - PowerShell: `PS C:\> <dirname>\Scripts\Activate.ps1`
+    - For POSIX systems (Linux, BSD, MacOS, Solaris):
+        - sh/bash/zsh: `source <dirname>/bin/activate`
+    - For NT systems (Windows):
+        - cmd.exe: `<dirname>\Scripts\activate.bat`
+        - PowerShell: `<dirname>\Scripts\Activate.ps1`
     
     Where dirname is the name of your virtual environment's directory (you
     created this in step 3).
 5. Install dependencies with `pip install -r requirements.txt`.
+6. Ensure that you have execute permissions for the indic resources scripts in
+   the [tokenizers package](src/tokenizers):
+    - Change directory to the package [src/tokenizers](src/tokenizers)
+    - For POSIX systems (Linux, BSD, MacOS, Solaris):
+        - sh/bash/zsh: `chmod u+x download_indic_resources.sh`
+    - For NT systems (Windows):
+        - cmd.exe/PowerShell: `attrib +x download_indic_resources.cmd`       
 
 ## Usage
 
@@ -135,7 +145,11 @@ the tokens' indices if they were in list form.
 #### Raw Tokens
 Raw tokens are tokens without any changes made to the text; no case
 normalization, no stemming, no filtering of stopwords or standalone
-punctuation. 
+punctuation.
+
+NOTE: For the Hindi Latin tokenizer, the tokens are transliterated into
+equivalent Devanagari tokens. This is to ensure compatibility with the
+standard Hindi tokenizer.
 
 ##### List form
 ```
@@ -157,6 +171,10 @@ token_dict = en_tok.get_raw_token_dict(sentence)  # {'If': [0], 'it': [1, 12], \
 Stemmed tokens have words changed to their base form (i.e. running -> run). All
 casing is normalized (changed to lowercase). No filtering of stopwords or
 standalone punctuation is done.
+
+NOTE: For the Hindi Latin tokenizer, the tokens are transliterated into
+equivalent Devanagari tokens. This is to ensure compatibility with the
+standard Hindi tokenizer.
 
 NOTE: For Chinese, the results will be identical to the raw tokens. Chinese has
 very little morphology, so stemming is not necessary.
@@ -184,6 +202,10 @@ token_dict = en_tok.get_stem_token_dict(sentence)  # {'if': [0], \
 Filtered tokens are stemmed, and have stopwords and standalone punctuation
 removed. For English, stopwords include "the", "a", "and", etc. Standalone
 punctuation is defined as tokens of length 1 that only contain punctuation.
+
+NOTE: For the Hindi Latin tokenizer, the tokens are transliterated into
+equivalent Devanagari tokens. This is to ensure compatibility with the
+standard Hindi tokenizer.
 
 NOTE: For the generic tokenizer, this is identical to the raw tokens.
 

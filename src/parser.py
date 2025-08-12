@@ -6,6 +6,12 @@ from bs4.element import Tag
 
 from tokenizers import *
 
+def _set_parser_lang_dict(cls):
+    """Decorator function to initialize Parser's language dictionary."""
+    cls._create_lang_dict()
+    return cls
+
+@_set_parser_lang_dict
 class Parser:
     """A multilanguage HTML parser.
     
@@ -17,9 +23,9 @@ class Parser:
     Supported languages:
     - English
     - Mandarin Chinese
-    - Hindi
+    - Hindi (Devanagari and Latin Scripts)
     - Spanish
-    - Modern Standard Arabic
+    - Arabic (Standard and dialects)
 
     For webpages of other languages, this parser uses a generic tokenizer that
     generates character bigrams. This is expected to work with almost all
@@ -63,10 +69,10 @@ class Parser:
     }
     gen_tokenizer = generic_tokenizer.GenericTokenizer()
 
-    language_dict = cls._create_lang_dict()
+    language_dict = None
 
     @classmethod
-    def _create_lang_dict(cls) -> dict:
+    def _create_lang_dict(cls) -> None:
         """Creates and returns a dictionary mapping HTML language subtags to
         supported languages.
 
@@ -79,16 +85,15 @@ class Parser:
         lang_dict : dict
             The mappings of HTML language subtags to simple language names.
         """
-        lang_dict = {}
+        cls.language_dict = {}
         for sublanguage, tag in bcp47.languages.items():
-            for language in tokenizer_dict:
+            for language in cls.tokenizer_dict:
                 if language in sublanguage:
                     if language == 'Hindi':
                         if 'Latin' not in sublanguage:
-                            lang_dict[tag] = language
+                            cls.language_dict[tag] = language
                     else:
-                        lang_dict[tag] = language
-        return lang_dict
+                        cls.language_dict[tag] = language
             
     def __init__(self):
         pass
