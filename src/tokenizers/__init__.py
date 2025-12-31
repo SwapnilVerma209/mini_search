@@ -30,7 +30,7 @@ nltk.data.path.append(nltk_path)
 nltk.download('punkt_tab', download_dir=nltk_path)
 nltk.download('stopwords', download_dir=nltk_path)
 
-# Download and load NLTK resources
+# Download and load indic resources
 tokenizers_path = os.path.abspath(module_dir)
 INDIC_RESOURCES_PATH = os.path.join(tokenizers_path, 'indic_nlp_resources')
 command = os.path.join(tokenizers_path, 'download_indic_resources')
