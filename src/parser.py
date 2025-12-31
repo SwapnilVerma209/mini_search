@@ -98,55 +98,6 @@ class Parser:
     def __init__(self):
         pass
     
-    def _get_language(self, tag: Tag) -> str:
-        """Gets the language of the HTML element as indicated by the HTML.
-
-        First, the element represented by the BeautifulSoup tag is checked for
-        a lang attribute of its own. If it does not, then this method searches
-        for the closest ancestor with a lang attribute. If none is found, then
-        None is returned.
-
-        In either case, if the lang attribute matches a supported language,
-        then the simple name of the language is returned (corresponding to the
-        keys of the tokenizer dictionary). Otherwise, None is returned.
-
-        Returns
-        -------
-        : str
-            The simple name of the language of the element represented by tag,
-            None otherwise.
-        """
-        for node in tag.self_and_parents:
-            if 'lang' in node.attrs:
-                lang = node['lang']
-                if lang in self.language_dict:
-                    return self.language_dict[lang]
-                return None
-        return None
-
-
-    def _get_tokenizer(self, tag: Tag) -> tokenizer.Tokenizer:
-        """Returns a tokenizer the HTML element represented by tag.
-
-        The language of the HTML element is found, then it is used to find the 
-        language's tokenizer in tokenizer_dict. If the entry does not exist,
-        the generic tokenizer is returned.
-
-        Parameters
-        ----------
-        tag : Tag
-            The BeautifulSoup Tag representing the the HTML element.
-
-        Returns
-        -------
-        tokenizer : Tokenizer
-            A tokenizer for HTML element's language.
-        """
-        language = self._get_language(tag)
-        if language == None:
-            return self.gen_tokenizer
-        return self.tokenizer_dict[language]
-
     def set_url(self, url: str) -> None:
         """Sets the current page to that of the given URL.
 
@@ -160,25 +111,6 @@ class Parser:
         """
         self.url = url
         self._make_soup()
-
-    def _get_html(self) -> str:
-        """Downloads and returns the HTML text from the URL.
-
-        Returns
-        ------
-        html : str
-            The downloaded HTML text.
-        """
-        response = requests.get(self.url)
-        return response.text
-
-    def _make_soup(self) -> None:
-        """Creates a BeautifulSoup object from the webpage.
-        
-        The HTML text is downloaded from the URL.
-        """
-        html = self._get_html()
-        self.soup = BeautifulSoup(html, 'html.parser')
 
     def get_title_tokens(self) -> dict:
         """Generates and returns a dictionary of the page's title element
@@ -201,39 +133,6 @@ class Parser:
         tok = self._get_tokenizer(title_tag)
         title_text = title_tag.string
         return tok.get_filtered_token_dict(title_text)
-
-    def _get_hn_tokens(self, n: int) -> list:
-        """Generates and returns a list of dictionaries corresponding to each
-        h<n> element.
-
-        The ith element of the list represents the ith h<n> element. Each
-        dictionary has the tokens as keys, and a list of the tokens' respective
-        word indicies (0-indexed).
-
-        If a header has a 'lang' attribute, then a differnt tokenizer from
-        the primary one is used. Tokens are stemmed and stripped of stopwords
-        and standalone punctuation.
-        
-        Parameters
-        ----------
-        n : int
-            The header level to search.
-
-        Returns
-        -------
-        header_tokens : list
-            A list with one token dictionary for each hn element.
-        """
-        if n < 1 or n > 6:
-            return []
-        header_type = 'h%d' % n
-        header_tokens = []
-        for header_tag in self.soup.find_all(header_type):
-            tok = self._get_tokenizer(header_tag)
-            header_text = header_tag.text
-            tokens = tok.get_filtered_token_dict(header_text)
-            header_tokens.append(tokens)
-        return header_tokens
 
     def get_header_tokens(self) -> list:
         """Generates and returns a 2D list of header token dictionaries.
@@ -297,3 +196,104 @@ class Parser:
             abs_url = urljoin(self.url, raw_url)
             urls.append(abs_url)
         return urls
+
+    def _get_language(self, tag: Tag) -> str:
+        """Gets the language of the HTML element as indicated by the HTML.
+
+        First, the element represented by the BeautifulSoup tag is checked for
+        a lang attribute of its own. If it does not, then this method searches
+        for the closest ancestor with a lang attribute. If none is found, then
+        None is returned.
+
+        In either case, if the lang attribute matches a supported language,
+        then the simple name of the language is returned (corresponding to the
+        keys of the tokenizer dictionary). Otherwise, None is returned.
+
+        Returns
+        -------
+        : str
+            The simple name of the language of the element represented by tag,
+            None otherwise.
+        """
+        for node in tag.self_and_parents:
+            if 'lang' in node.attrs:
+                lang = node['lang']
+                if lang in self.language_dict:
+                    return self.language_dict[lang]
+                return None
+        return None
+
+
+    def _get_tokenizer(self, tag: Tag) -> tokenizer.Tokenizer:
+        """Returns a tokenizer the HTML element represented by tag.
+
+        The language of the HTML element is found, then it is used to find the 
+        language's tokenizer in tokenizer_dict. If the entry does not exist,
+        the generic tokenizer is returned.
+
+        Parameters
+        ----------
+        tag : Tag
+            The BeautifulSoup Tag representing the the HTML element.
+
+        Returns
+        -------
+        tokenizer : Tokenizer
+            A tokenizer for HTML element's language.
+        """
+        language = self._get_language(tag)
+        if language == None:
+            return self.gen_tokenizer
+        return self.tokenizer_dict[language]
+
+    def _get_html(self) -> str:
+        """Downloads and returns the HTML text from the URL.
+
+        Returns
+        ------
+        html : str
+            The downloaded HTML text.
+        """
+        response = requests.get(self.url)
+        return response.text
+
+    def _make_soup(self) -> None:
+        """Creates a BeautifulSoup object from the webpage.
+        
+        The HTML text is downloaded from the URL.
+        """
+        html = self._get_html()
+        self.soup = BeautifulSoup(html, 'html.parser')
+
+    def _get_hn_tokens(self, n: int) -> list:
+        """Generates and returns a list of dictionaries corresponding to each
+        h<n> element.
+
+        The ith element of the list represents the ith h<n> element. Each
+        dictionary has the tokens as keys, and a list of the tokens' respective
+        word indicies (0-indexed).
+
+        If a header has a 'lang' attribute, then a differnt tokenizer from
+        the primary one is used. Tokens are stemmed and stripped of stopwords
+        and standalone punctuation.
+        
+        Parameters
+        ----------
+        n : int
+            The header level to search.
+
+        Returns
+        -------
+        header_tokens : list
+            A list with one token dictionary for each hn element.
+        """
+        if n < 1 or n > 6:
+            return []
+        header_type = 'h%d' % n
+        header_tokens = []
+        for header_tag in self.soup.find_all(header_type):
+            tok = self._get_tokenizer(header_tag)
+            header_text = header_tag.text
+            tokens = tok.get_filtered_token_dict(header_text)
+            header_tokens.append(tokens)
+        return header_tokens
