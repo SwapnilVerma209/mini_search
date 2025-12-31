@@ -197,6 +197,47 @@ class Parser:
             urls.append(abs_url)
         return urls
 
+    def _make_soup(self) -> None:
+        """Creates a BeautifulSoup object from the webpage.
+        
+        The HTML text is downloaded from the URL.
+        """
+        html = self._get_html()
+        self.soup = BeautifulSoup(html, 'html.parser')
+
+    def _get_html(self) -> str:
+        """Downloads and returns the HTML text from the URL.
+
+        Returns
+        ------
+        html : str
+            The downloaded HTML text.
+        """
+        response = requests.get(self.url)
+        return response.text
+
+    def _get_tokenizer(self, tag: Tag) -> tokenizer.Tokenizer:
+        """Returns a tokenizer the HTML element represented by tag.
+
+        The language of the HTML element is found, then it is used to find the 
+        language's tokenizer in tokenizer_dict. If the entry does not exist,
+        the generic tokenizer is returned.
+
+        Parameters
+        ----------
+        tag : Tag
+            The BeautifulSoup Tag representing the the HTML element.
+
+        Returns
+        -------
+        tokenizer : Tokenizer
+            A tokenizer for HTML element's language.
+        """
+        language = self._get_language(tag)
+        if language == None:
+            return self.gen_tokenizer
+        return self.tokenizer_dict[language]
+
     def _get_language(self, tag: Tag) -> str:
         """Gets the language of the HTML element as indicated by the HTML.
 
@@ -222,48 +263,6 @@ class Parser:
                     return self.language_dict[lang]
                 return None
         return None
-
-
-    def _get_tokenizer(self, tag: Tag) -> tokenizer.Tokenizer:
-        """Returns a tokenizer the HTML element represented by tag.
-
-        The language of the HTML element is found, then it is used to find the 
-        language's tokenizer in tokenizer_dict. If the entry does not exist,
-        the generic tokenizer is returned.
-
-        Parameters
-        ----------
-        tag : Tag
-            The BeautifulSoup Tag representing the the HTML element.
-
-        Returns
-        -------
-        tokenizer : Tokenizer
-            A tokenizer for HTML element's language.
-        """
-        language = self._get_language(tag)
-        if language == None:
-            return self.gen_tokenizer
-        return self.tokenizer_dict[language]
-
-    def _get_html(self) -> str:
-        """Downloads and returns the HTML text from the URL.
-
-        Returns
-        ------
-        html : str
-            The downloaded HTML text.
-        """
-        response = requests.get(self.url)
-        return response.text
-
-    def _make_soup(self) -> None:
-        """Creates a BeautifulSoup object from the webpage.
-        
-        The HTML text is downloaded from the URL.
-        """
-        html = self._get_html()
-        self.soup = BeautifulSoup(html, 'html.parser')
 
     def _get_hn_tokens(self, n: int) -> list:
         """Generates and returns a list of dictionaries corresponding to each
