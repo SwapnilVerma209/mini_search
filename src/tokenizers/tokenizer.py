@@ -32,52 +32,6 @@ class Tokenizer(ABC):
     def __init__(self):
         pass
 
-    def _make_token_dict(self, token_list: list) -> dict:
-        """Creates and returns a token dict given a token list.
-        
-        The dict has each unique token as the key, and a list of their indicies
-        as the value.
-
-        Parameters
-        ----------
-        token_list : list
-            The list of tokens to create a token dict out of.
-
-        Returns
-        -------
-        token_dict : dict
-            A dictionary of tokens with lists of their indicies in the
-            original list.
-        """
-        token_dict = {}
-        for i in range(len(token_list)):
-            token = token_list[i]
-            if token in token_dict:
-                token_dict[token].append(i)
-            else:
-                token_dict[token] = [i]
-        return token_dict
-
-    def _is_punctuation(self, text: str) -> bool:
-        """Determines if a given string is a standalone punctuation.
-
-        A string is considered a standalone punctuation if it only consists of
-        one character, and that character is a punctuation.
-
-        Parameters:
-        -----------
-        text : str
-            The string to be checked.
-        
-        Returns
-        -------
-        is_punctuation : bool
-            True if the string is a stanalone punctuation, false otherwise.
-        """
-        if len(text) != 1:
-            return False
-        return unicodedata.category(text[0]).startswith("P")
-
     @abstractmethod
     def get_raw_token_list(self, text: str) -> list:
         """Creates and returns a list of unprocessed tokens.
@@ -97,7 +51,7 @@ class Tokenizer(ABC):
             A list of raw tokens generated from the string.
         """
         return None
-    
+
     def get_raw_token_dict(self, text: str) -> dict:
         """Generates a dictionary of raw tokens from the given string.
 
@@ -118,7 +72,7 @@ class Tokenizer(ABC):
         """
         token_list = self.get_raw_token_list(text)
         return self._make_token_dict(token_list)
-    
+
     @abstractmethod
     def get_stemmed_token_list(self, text: str) -> list:
         """Creates and returns a list of stemmed tokens.
@@ -201,3 +155,49 @@ class Tokenizer(ABC):
         """
         token_list = self.get_filtered_token_list(text)
         return self._make_token_dict(token_list)
+
+    def _make_token_dict(self, token_list: list) -> dict:
+        """Creates and returns a token dict given a token list.
+        
+        The dict has each unique token as the key, and a list of their indicies
+        as the value.
+
+        Parameters
+        ----------
+        token_list : list
+            The list of tokens to create a token dict out of.
+
+        Returns
+        -------
+        token_dict : dict
+            A dictionary of tokens with lists of their indicies in the
+            original list.
+        """
+        token_dict = {}
+        for i in range(len(token_list)):
+            token = token_list[i]
+            if token in token_dict:
+                token_dict[token].append(i)
+            else:
+                token_dict[token] = [i]
+        return token_dict
+
+    def _is_punctuation(self, text: str) -> bool:
+        """Determines if a given string is a standalone punctuation.
+
+        A string is considered a standalone punctuation if it only consists of
+        one character, and that character is a punctuation.
+
+        Parameters:
+        -----------
+        text : str
+            The string to be checked.
+        
+        Returns
+        -------
+        is_punctuation : bool
+            True if the string is a stanalone punctuation, false otherwise.
+        """
+        if len(text) != 1:
+            return False
+        return unicodedata.category(text[0]).startswith("P")
