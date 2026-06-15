@@ -1,4 +1,5 @@
-from chinese import ChineseAnalyzer
+import jieba
+import opencc
 import nltk
 from nltk.corpus import stopwords
 
@@ -9,15 +10,16 @@ class ChineseTokenizer(Tokenizer):
     
     Provides an interface for getting Chinese tokens at different stages of
     processing either as a list or as a dictonary with tokens and their
-    occurence indicies. Utilizes the ChineseAnalyzer from the package chinese,
-    and NLTK's Chinese stopword data.
+    occurence indicies. Tokens are in Simplified Chinese. Utilizes the jieba
+    package, opencc's traditional to simplified converter, and NLTK's Chinese
+    stopword data.
 
     Attributes
     ----------
     stops : set
         A set of Chinese stopwords.
-    analyzer : ChineseAnalyzer
-        A tool for analyzing Chinese text from the chinese package.
+    t2s : opencc.OpenCC
+        A converter from Traditional to Simplified Chinese
     
     Methods
     -------
@@ -39,7 +41,7 @@ class ChineseTokenizer(Tokenizer):
     """
 
     stops = set(stopwords.words('chinese'))
-    analyzer = ChineseAnalyzer()
+    t2s = opencc.OpenCC('t2s')
 
     def __init__(self):
         pass
@@ -63,7 +65,10 @@ class ChineseTokenizer(Tokenizer):
         """
 
         text = ''.join(text.split())
-        return self.analyzer.parse(text).tokens()
+        tokens = jieba.lcut_for_search(text)
+        for i in range(len(tokens)):
+            tokens[i] = self.t2s.convert(tokens[i])
+        return tokens
     
     def get_stemmed_token_list(self, text: str) -> list:
         """Creates and returns a list of stemmed tokens.
