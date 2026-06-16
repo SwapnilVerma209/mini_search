@@ -95,7 +95,9 @@ class Parser:
                     else:
                         cls.language_dict[tag] = language
             
-    def __init__(self):
+    def __init__(self, user_agent: str):
+        """Create a new Parser with the given user agent"""
+        self._user_agent = user_agent
         pass
     
     def set_url(self, url: str) -> None:
@@ -129,7 +131,11 @@ class Parser:
             A dictionary of the page's title element tokens and their
             occurences.
         """
+        if self.soup.head is None:
+            return {}
         title_tag = self.soup.head.title
+        if title_tag is None:
+            return {}
         tok = self._get_tokenizer(title_tag)
         title_text = title_tag.string
         return tok.get_filtered_token_dict(title_text)
@@ -213,7 +219,7 @@ class Parser:
         html : str
             The downloaded HTML text.
         """
-        response = requests.get(self.url)
+        response = requests.get(self.url, headers={'user-agent': self._user_agent})
         return response.text
 
     def _get_tokenizer(self, tag: Tag) -> tokenizer.Tokenizer:
