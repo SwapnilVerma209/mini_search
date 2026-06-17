@@ -8,7 +8,8 @@ more established search engine like Google.
 ## Special Thanks
 
 - [NLTK](https://www.nltk.org/)
-- [chinese](https://github.com/morinokami/chinese)
+- [jieba](https://github.com/fxsjy/jieba)
+- [OpenCC](https://github.com/BYVoid/OpenCC)
 - [LiHiSTO](https://github.com/semicolon123/LiHiSTO) (see [citations](docs/citations.bib))
 - [Indic NLP Library](https://github.com/anoopkunchukuttan/indic_nlp_library)
 (see [citations](docs/citations.bib))
