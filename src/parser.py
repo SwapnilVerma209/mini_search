@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 
 from tokenizers import *
+from webpage import Webpage
 
 def _set_parser_lang_dict(cls):
     """Decorator function to initialize Parser's language dictionary."""
@@ -49,6 +50,8 @@ class Parser:
     -------
     set_url(url: str)
         Sets the url of the current page, initialize attributes.
+    get_page_data() -> Webpage
+        Returns a Webpage object containing the page's data.
     get_title_tokens() -> dict
         Returns a dictionary of the word's tokens.
     get_header_tokens() -> list
@@ -113,6 +116,23 @@ class Parser:
         """
         self.url = url
         self._make_soup()
+
+    def get_page_data(self) -> Webpage:
+        """Gets all the tokens and URLs from the given URL, and returns a
+        Webpage object with the data.
+
+        Returns
+        -------
+        webpage : Webpage
+            A Webpage object containing all the tokens and URLs from the webpage
+            at the given URL.
+        """
+        title_tokens = self.get_title_tokens()
+        header_tokens = self.get_header_tokens()
+        paragraph_tokens = self.get_paragraph_tokens()
+        urls = self.get_urls()
+        return Webpage(self.url, title_tokens, header_tokens, \
+                paragraph_tokens, urls)
 
     def get_title_tokens(self) -> dict:
         """Generates and returns a dictionary of the page's title element

@@ -11,8 +11,9 @@ import unittest
 from unittest.mock import patch
 from bs4 import BeautifulSoup
 
-from context import parser
+from context import parser, webpage
 from parser import Parser
+from webpage import Webpage
 
 
 def make_parser(html: str) -> Parser:
@@ -287,6 +288,98 @@ class TestGetUrls(unittest.TestCase):
         self.assertEqual(len(urls), 2)
         self.assertIn('http://other.com/', urls)
         self.assertIn('http://example.com/local', urls)
+
+
+# ---------------------------------------------------------------------------
+# get_page_data tests
+# ---------------------------------------------------------------------------
+
+class TestGetPageData(unittest.TestCase):
+
+    def test_returns_webpage_instance(self):
+        html = (
+            '<html lang="en"><head><title>My Page</title></head>'
+            '<body><h1>Header</h1><p>A paragraph.</p>'
+            '<a href="/link">Link</a></body></html>'
+        )
+        p = make_parser(html)
+        result = p.get_page_data()
+        self.assertIsInstance(result, Webpage)
+
+    def test_url_stored_on_webpage(self):
+        p = make_parser('<html lang="en"><body></body></html>')
+        result = p.get_page_data()
+        self.assertEqual(result.url, 'http://example.com/')
+
+    def test_title_tokens_match_get_title_tokens(self):
+        html = '<html lang="en"><head><title>Quick brown fox</title></head><body></body></html>'
+        p = make_parser(html)
+        self.assertEqual(p.get_page_data().title_tokens, p.get_title_tokens())
+
+    def test_header_tokens_match_get_header_tokens(self):
+        html = (
+            '<html lang="en"><body>'
+            '<h1>First</h1><h2>Second</h2>'
+            '</body></html>'
+        )
+        p = make_parser(html)
+        self.assertEqual(p.get_page_data().header_tokens, p.get_header_tokens())
+
+    def test_paragraph_tokens_match_get_paragraph_tokens(self):
+        html = (
+            '<html lang="en"><body>'
+            '<p>One</p><p>Two</p>'
+            '</body></html>'
+        )
+        p = make_parser(html)
+        self.assertEqual(p.get_page_data().paragraph_tokens, p.get_paragraph_tokens())
+
+    def test_urls_match_get_urls(self):
+        html = (
+            '<html><body>'
+            '<a href="http://a.com">A</a>'
+            '<a href="/local">B</a>'
+            '</body></html>'
+        )
+        p = make_parser(html)
+        self.assertEqual(p.get_page_data().urls, p.get_urls())
+
+    def test_empty_page(self):
+        p = make_parser('<html><head></head><body></body></html>')
+        result = p.get_page_data()
+        self.assertEqual(result.title_tokens, {})
+        self.assertEqual(result.header_tokens, [None, [], [], [], [], [], []])
+        self.assertEqual(result.paragraph_tokens, [])
+        self.assertEqual(result.urls, [])
+
+    def test_header_tokens_structure(self):
+        # Verify the 7-slot structure is preserved in the Webpage
+        html = '<html lang="en"><body><h1>A</h1><h3>B</h3></body></html>'
+        p = make_parser(html)
+        result = p.get_page_data()
+        self.assertEqual(len(result.header_tokens), 7)
+        self.assertIsNone(result.header_tokens[0])
+        self.assertEqual(len(result.header_tokens[1]), 1)  # one h1
+        self.assertEqual(len(result.header_tokens[3]), 1)  # one h3
+
+    def test_paragraph_count_preserved(self):
+        html = (
+            '<html lang="en"><body>'
+            '<p>A</p><p>B</p><p>C</p>'
+            '</body></html>'
+        )
+        p = make_parser(html)
+        self.assertEqual(len(p.get_page_data().paragraph_tokens), 3)
+
+    def test_url_count_preserved(self):
+        html = (
+            '<html><body>'
+            '<a href="http://x.com">X</a>'
+            '<a href="http://y.com">Y</a>'
+            '</body></html>'
+        )
+        p = make_parser(html)
+        self.assertEqual(len(p.get_page_data().urls), 2)
 
 
 # ---------------------------------------------------------------------------
