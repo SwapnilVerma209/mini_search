@@ -295,8 +295,7 @@ class Parser:
         h<n> element.
 
         The ith element of the list represents the ith h<n> element. Each
-        dictionary has the tokens as keys, and a list of the tokens' respective
-        word indicies (0-indexed).
+        dictionary has the tokens as keys, and the tokens' counts as values.
 
         If a header has a 'lang' attribute, then a differnt tokenizer from
         the primary one is used. Tokens are stemmed and stripped of stopwords

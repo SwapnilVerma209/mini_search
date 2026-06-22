@@ -12,20 +12,16 @@ class GenericTokenizer(Tokenizer):
     get_raw_token_list(text : str) -> list
         Returns a list of character bigrams.
     get_raw_token_dict(text : str) -> dict
-        Returns a dictionary of character bigrams paired with their occurence
-        indicies.
+        Returns a dictionary of character bigrams paired with their counts.
     get_stemmed_token_list(text : str) -> list
         Returns a list of character bigrams.
     get_stemmed_token_dict(text : str) -> dict
-        Returns a dictionary of character bigrams paired with their occurence
-        indicies.
+        Returns a dictionary of character bigrams paired with their counts.
     get_filtered_token_list(text : str) -> list
         Returns a list of character bigrams.
     get_filtered_token_dict(text : str) -> dict
-        Returns a dictionary of character bigrams paired with their occurence
-        indicies.
+        Returns a dictionary of character bigrams paired with their counts.
     """
-
     def __init__(self):
         pass
 
@@ -45,7 +41,6 @@ class GenericTokenizer(Tokenizer):
         token_list : list
             A list of character bigrams generated from the string.
         """
-
         text = "".join(text.split())
         raw_token_list = []
         for i in range(len(text) - 1):
@@ -69,7 +64,6 @@ class GenericTokenizer(Tokenizer):
         token_list : list
             A list of character bigrams generated from the string.
         """
-
         return self.get_raw_token_list(text)
     
     def get_filtered_token_list(self, text: str) -> list:
@@ -88,5 +82,4 @@ class GenericTokenizer(Tokenizer):
         token_list : list
             A list of character bigrams generated from the string.
         """
-        
         return self.get_raw_token_list(text)

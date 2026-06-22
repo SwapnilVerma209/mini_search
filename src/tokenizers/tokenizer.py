@@ -15,18 +15,15 @@ class Tokenizer(ABC):
     get_raw_token_list(text : str) -> list
         Returns a list of unprocessed tokens.
     get_raw_token_dict(text : str) -> dict
-        Returns a dictionary of unprocessed tokens paired with their occurence
-        indicies.
+        Returns a dictionary of unprocessed tokens paired with their counts.
     get_stemmed_token_list(text : str) -> list
         Returns a list of stemmed tokens.
     get_stemmed_token_dict(text : str) -> dict
-        Returns a dictionary of stemmed tokens paired with their occurence
-        indicies.
+        Returns a dictionary of stemmed tokens paired with their counts.
     get_filtered_token_list(text : str) -> list
         Returns a list of stemmed and filtered tokens.
     get_filtered_token_dict(text : str) -> dict
-        Returns a dictionary of stemmed and filtered tokens paired with their
-        occurence indicies.
+        Returns a dictionary of stemmed and filtered tokens paired with counts.
     """
     @abstractmethod
     def __init__(self):
@@ -57,8 +54,8 @@ class Tokenizer(ABC):
 
         The string is separated into tokens and put into a list. No stemming
         or filtering is done at this point. Then, tokens from the list are put
-        into a dict. The dict has each unique token as the key, and a list of
-        their indicies as the value.
+        into a dict. The dict has each unique token as the key, and the count of
+        that token as the value.
 
         Parameters
         ----------
@@ -68,7 +65,7 @@ class Tokenizer(ABC):
         Returns
         -------
         raw_token_dict : dict
-            A dictionary of raw tokens and their occurence indicies.
+            A dictionary of raw tokens and their counts.
         """
         token_list = self.get_raw_token_list(text)
         return self._make_token_dict(token_list)
@@ -98,7 +95,7 @@ class Tokenizer(ABC):
 
         The string is separated into tokens, stemmed, and put into a list.
         Then, tokens from the list are put into a dict. The dict has each
-        unique token as the key, and a list of their indicies as the value.
+        unique token as the key, and the count of that token as the value.
 
         Parameters
         ----------
@@ -108,7 +105,7 @@ class Tokenizer(ABC):
         Returns
         -------
         raw_token_dict : dict
-            A dictionary of stemmed tokens and their occurence indicies.
+            A dictionary of stemmed tokens and their counts.
         """
         token_list = self.get_stemmed_token_list(text)
         return self._make_token_dict(token_list)
@@ -140,7 +137,7 @@ class Tokenizer(ABC):
         Words in the given string are separated as tokens, stemmed, filtered of
         stopwords and standalone punctuation, and put into a list. Then, tokens
         from the list are put into a dict. The dict has each unique token as
-        the key, and a list of their indicies as the value.
+        the key, and the count of that token as the value.
 
         Parameters
         ----------
@@ -150,8 +147,7 @@ class Tokenizer(ABC):
         Returns
         -------
         raw_token_dict : dict
-            A dictionary of stemmed and filtered tokens and their occurence
-            indicies.
+            A dictionary of stemmed and filtered tokens and their counts.
         """
         token_list = self.get_filtered_token_list(text)
         return self._make_token_dict(token_list)
@@ -159,7 +155,7 @@ class Tokenizer(ABC):
     def _make_token_dict(self, token_list: list) -> dict:
         """Creates and returns a token dict given a token list.
         
-        The dict has each unique token as the key, and a list of their indicies
+        The dict has each unique token as the key, and the count of that token
         as the value.
 
         Parameters
@@ -170,16 +166,13 @@ class Tokenizer(ABC):
         Returns
         -------
         token_dict : dict
-            A dictionary of tokens with lists of their indicies in the
-            original list.
+            A dictionary of tokens with their counts.
         """
         token_dict = {}
-        for i in range(len(token_list)):
-            token = token_list[i]
-            if token in token_dict:
-                token_dict[token].append(i)
-            else:
-                token_dict[token] = [i]
+        for token in token_list:
+            if token not in token_dict:
+                token_dict[token] = 0
+            token_dict[token] += 1
         return token_dict
 
     def _is_punctuation(self, text: str) -> bool:

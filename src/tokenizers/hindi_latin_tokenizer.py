@@ -28,20 +28,17 @@ class HindiLatinTokenizer(HindiTokenizer):
     get_raw_token_list(text : str) -> list
         Returns a list of unprocessed tokens.
     get_raw_token_dict(text : str) -> dict
-        Returns a dictionary of unprocessed tokens paired with their occurence
-        indicies.
+        Returns a dictionary of unprocessed tokens paired with their counts.
     get_stemmed_token_list(text : str) -> list
         Returns a list of stemmed tokens.
     get_stemmed_token_dict(text : str) -> dict
-        Returns a dictionary of stemmed tokens paired with their occurence
-        indicies.
+        Returns a dictionary of stemmed tokens paired with their counts.
     get_filtered_token_list(text : str) -> list
         Returns a list of stemmed and filtered tokens.
     get_filtered_token_dict(text : str) -> dict
         Returns a dictionary of stemmed and filtered tokens paired with their
-        occurence indicies.
+        counts.
     """
-
     def get_raw_token_list(self, text: str) -> list:
         """Creates and returns a list of unprocessed tokens.
 

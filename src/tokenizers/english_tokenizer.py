@@ -24,20 +24,17 @@ class EnglishTokenizer(Tokenizer):
     get_raw_token_list(text : str) -> list
         Returns a list of unprocessed tokens.
     get_raw_token_dict(text : str) -> dict
-        Returns a dictionary of unprocessed tokens paired with their occurence
-        indicies.
+        Returns a dictionary of unprocessed tokens paired with their counts.
     get_stemmed_token_list(text : str) -> list
         Returns a list of stemmed tokens.
     get_stemmed_token_dict(text : str) -> dict
-        Returns a dictionary of stemmed tokens paired with their occurence
-        indicies.
+        Returns a dictionary of stemmed tokens paired with their counts.
     get_filtered_token_list(text : str) -> list
         Returns a list of stemmed and filtered tokens.
     get_filtered_token_dict(text : str) -> dict
         Returns a dictionary of stemmed and filtered tokens paired with their
-        occurence indicies.
+        counts.
     """
-
     stops = set(stopwords.words('english'))
     stemmer = EnglishStemmer()
 
@@ -60,7 +57,6 @@ class EnglishTokenizer(Tokenizer):
         token_list : list
             A list of raw tokens generated from the string.
         """
-
         return word_tokenize(text)
     
     def get_stemmed_token_list(self, text: str) -> list:
@@ -79,7 +75,6 @@ class EnglishTokenizer(Tokenizer):
         token_list : list
             A list of stemmed tokens generated from the string.
         """
-
         stemmed_token_list = self.get_raw_token_list(text)
         for i in range(len(stemmed_token_list)):
             token = stemmed_token_list[i]
@@ -102,7 +97,6 @@ class EnglishTokenizer(Tokenizer):
         token_list : list
             A list of stemmed and filtered tokens generated from the string.
         """
-
         stemmed_token_list = self.get_stemmed_token_list(text)
         filtered_token_list = []
         for token in stemmed_token_list:

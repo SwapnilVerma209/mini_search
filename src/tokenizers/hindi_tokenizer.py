@@ -27,20 +27,17 @@ class HindiTokenizer(Tokenizer):
     get_raw_token_list(text : str) -> list
         Returns a list of unprocessed tokens.
     get_raw_token_dict(text : str) -> dict
-        Returns a dictionary of unprocessed tokens paired with their occurence
-        indicies.
+        Returns a dictionary of unprocessed tokens paired with their counts.
     get_stemmed_token_list(text : str) -> list
         Returns a list of stemmed tokens.
     get_stemmed_token_dict(text : str) -> dict
-        Returns a dictionary of stemmed tokens paired with their occurence
-        indicies.
+        Returns a dictionary of stemmed tokens paired with their counts.
     get_filtered_token_list(text : str) -> list
         Returns a list of stemmed and filtered tokens.
     get_filtered_token_dict(text : str) -> dict
         Returns a dictionary of stemmed and filtered tokens paired with their
-        occurence indicies.
+        counts.
     """
-
     stops = hindi_sw.get_hindi_sw()
     stemmer = snowballstemmer.stemmer('hindi')
     normalizer = IndicNormalizerFactory().get_normalizer('hi')
@@ -64,7 +61,6 @@ class HindiTokenizer(Tokenizer):
         token_list : list
             A list of raw tokens generated from the string.
         """
-
         text = self.normalizer.normalize(text)
         token_list = indic_tokenize.trivial_tokenize(text)
         raw_token_list = []
@@ -91,7 +87,6 @@ class HindiTokenizer(Tokenizer):
         token_list : list
             A list of stemmed tokens generated from the string.
         """
-
         raw_token_list = self.get_raw_token_list(text)
         return self.stemmer.stemWords(raw_token_list)
     
@@ -111,7 +106,6 @@ class HindiTokenizer(Tokenizer):
         token_list : list
             A list of stemmed and filtered tokens generated from the string.
         """
-
         stemmed_token_list = self.get_stemmed_token_list(text)
         filtered_token_list = []
         for token in stemmed_token_list:
